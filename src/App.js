@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import delay from "delay";
 
-function App() {
+const fetch = async (setCategories) => {
+  await delay(2000);
+
+  setCategories(["Food", "Car"]);
+  console.log("fetched!");
+};
+
+const MySelect = ({ value, options, onChange }) => {
+  return <Select options={options} value={value} onChange={onChange} />;
+};
+
+const App = () => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetch(setCategories);
+  }, []);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      const first = categories.find((item) => item === "Food");
+      setSelectedCategory({ label: first, value: first });
+    }
+  }, [categories]);
+
+  const onCategorySelected = (selected) => {
+    setSelectedCategory(selected);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <MySelect
+        value={selectedCategory}
+        options={categories.map((item) => {
+          return { label: item, value: item };
+        })}
+        onChange={onCategorySelected}
+      />
     </div>
   );
-}
+};
 
 export default App;
